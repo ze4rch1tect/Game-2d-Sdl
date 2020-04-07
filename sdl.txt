@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+int main ( int argc, char** argv )
+{
+printf("bonjour, bienvenu dans mes devinette. vous avez 3 essais a shaque fois\n\n");
+long again=5, compteur=0;
+while (again >0)
+{
+long nombreMystere=0;
+const long MAX = 10, MIN = 1;
+srand(time(NULL));
+nombreMystere = (rand() % (MAX - MIN + 1)) + MIN;
+switch (nombreMystere)
+{
+case 1 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "chaise";
+printf("jai quattre pied mais ne peut peu pa bouger, qui suis-je?: ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+case 2 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "rien";
+printf("je suis mieu que dieu pire que le diable, les riches nen non pas les pauvre en on,");
+printf("si on me mange, on meurt. qui suije? : ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+case 3 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "homme";
+printf("jai 4 patte le matin, 2 le midi et 3 le soir, qui suis-je?: ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+case 4 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "n";
+printf("je suis a la fin du matin, au debu de la nuit, et dans la lune: ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+case 5 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "enrevoir";
+printf("dit enrevoir: ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+case 6 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "salut";
+printf("dit salut: ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+case 7 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "amour";
+printf("dit amour: ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+case 8 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "haine";
+printf("dit haine: ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+case 9 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "rolala";
+printf("dit rolala: ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+case 10 :
+for (compteur =1 ; compteur <= 3 ; compteur++)
+{
+char inconu[25];
+char blok[] = "tien";
+printf("dit tien: ");
+scanf("%s\n", inconu);
+if (inconu ==blok) {printf ("bravo ! c'etait bien le mot %s !", blok);break;}
+else if (inconu != blok) {printf("ce n'est pas %s, tu as epuiser %d vie!", inconu, compteur);}
+}
+break;
+}
+if (compteur = 3)
+{printf("tu as perdu, veut tu recomencer? 0=non 1 ou + = oui : "); scanf("%d\n", again);}
+else
+{printf("veut tu rejouer? 0=non 1 ou + = oui : "); scanf("%d\n", again);}
+}
+system("PAUSE");
+}
