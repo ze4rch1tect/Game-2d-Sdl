@@ -51,6 +51,8 @@ int doubleJumped = 0;
 cpBool lastJumpState = cpFalse;
 cpVect moveDir;
 
+int isMultiplayer = 0;
+
 cpBool grounded2 = cpFalse;
 int doubleJumped2 = 0;
 cpBool lastJumpState2 = cpFalse;
@@ -551,12 +553,20 @@ void processClickEvent(Sprite* sprite, int e)
         break;
 
       }
-    case 1:
-      {
-				setScene(1);
-        //Sprites[0]->image = SDL_LoadBMP("images/background main 2.bmp");
-        break;
-      }
+			case 1:
+	      {
+					isMultiplayer = 0;
+					setScene(1);
+	        //Sprites[0]->image = SDL_LoadBMP("images/background main 2.bmp");
+	        break;
+	      }
+			case 111:
+	      {
+					isMultiplayer = 1;
+					setScene(1);
+	        //Sprites[0]->image = SDL_LoadBMP("images/background main 2.bmp");
+	        break;
+	      }
     case 2:
       {
         cMenu = 2;
@@ -705,8 +715,10 @@ void setScene(int id)
     addButton("images/CRED", btnx, btny+btnh*3, 0)->clickEvent = 7;
     addButton("images/quit", btnx, btny+btnh*4, 0)->clickEvent = 8;
 
-    addButton("images/solo", btnx, btny+btnh, 1);
-    addButton("images/multiplayer", btnx, btny+btnh*2, 1);
+
+
+    addButton("images/solo", btnx, btny+btnh, 1)->clickEvent = 1;
+    addButton("images/multiplayer", btnx, btny+btnh*2, 1)->clickEvent = 111;
     addButton("images/quit", btnx, btny+btnh*3, 1)->clickEvent = 5;
 
     addSprite("images/pop up menu", 230, 100, 2);
@@ -723,6 +735,7 @@ void setScene(int id)
     Sprite* creds = addSprite("images/credits", 230, 100, 4);
     creds->updateEvent = 2;
     addButton("images/quit", 800-200, 480-100, 4)->clickEvent = 5;
+
 
 
     //SDL_Delay(1000);
@@ -760,6 +773,11 @@ void setScene(int id)
 		playerSprite2->anims[2] = IMG_Load("images/female3.png");
 		playerSprite2->anims[3] = IMG_Load("images/female4.png");
 
+		if(isMultiplayer==0)
+		{
+			playerSprite2->visible = 0;
+			lives2 = 0;
+		}
 		enemySprite = addSprite("images/potato1", 0, 0, -1);
 
 		enemySprite->anims[0] = IMG_Load("images/potato1.png");
