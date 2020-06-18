@@ -1,3 +1,4 @@
+/// @file main.c
 #include <stdio.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_mixer.h"
@@ -116,34 +117,39 @@ cpShapeFilter GRAB_FILTER = {CP_NO_GROUP, GRABBABLE_MASK_BIT, GRABBABLE_MASK_BIT
 cpShapeFilter NOT_GRABBABLE_FILTER = {CP_NO_GROUP, ~GRABBABLE_MASK_BIT, ~GRABBABLE_MASK_BIT};
 */
 //#include "SDL2/SDL_image.h"
-
+/**
+* Structure Sprite qui define tout type d'objets à afficher sur l'ecran (entités, boutons, background, etc)
+*/
 typedef struct _s
 {
 
-  SDL_Surface* image;
-  SDL_Surface* hoverImage;
-  SDL_Surface* clickImage;
-  SDL_Rect pos;
+  SDL_Surface* image; /**< image du sprite par defaut */
+  SDL_Surface* hoverImage; /**< image du bouton lors du mouvement de la souris par dessus */
+  SDL_Surface* clickImage; /**< image du bouton lors de l'appui de la souris */
+  SDL_Rect pos; /**< la position (sur ecran si isStatic==1, dans le monde du jeu si isStatic==0) */
 
-	SDL_Surface* anims[30];
-	int animated;
-	int nanims;
+	SDL_Surface* anims[30]; /**< tableau des images de l'animation du sprite */
+	int animated; /**< 1 si l'objet est animé, sinon 0 */
+	int nanims; /**< nombre des images de l'animation */
 
-  cpBody *body;
+  cpBody *body; /**< l'objet de collision relié au sprite */
 
 
-  int clickEvent;
-  int type;
-  int visible;
-  int order;
-  int menu;
-  int updateEvent;
-  int ignoreMouse;
-	int isStatic;
-	int owner;
-	int used;
+  int clickEvent; /**< l'identifient lors du clic */
+  int type; /**< le type (1=normal, 2=bouton) */
+  int visible; /**< 1 si visible, sinon 0; Si c'est 0, le sprite sera pas affiché */
+  int order; /**< l'ordre d'affichage du sprite */
+  int menu; /**< l'identifiant du sous menu associé au sprite */
+  int updateEvent; /**< l'identifiant pour faire des operations sur le sprite chaque iteration du jeu */
+  int ignoreMouse; /**< si 1, les interactions avec la souris seront ignorés */
+	int isStatic; /**< si 1, l'objet ne sera pas affecté par le zoom et le mouvement du joueur */
+	int owner; /**< le proprietaire lors du jeu d'enigme contre l'IA2 */
+	int used; /**< 1 si utilisé (ne sera plus possible d'appuyer dessus), sinon 0 */
 } Sprite;
 
+/**
+* Structure Camera qui sert à mettre les images sur l'ecran relativement à la position de la camera
+*/
 typedef struct _camera
 {
   int x;
@@ -182,7 +188,6 @@ int lives2 = 3;
 
 int cScene = 1;
 
-
 void SelectPlayerGroundNormal(cpBody *body, cpArbiter *arb, cpVect *groundNormal){
 	cpVect n = cpvneg(cpArbiterGetNormal(arb));
 
@@ -199,6 +204,10 @@ void SelectPlayerGroundNormal2(cpBody *body, cpArbiter *arb, cpVect *groundNorma
 	}
 }
 
+
+/**
+ * Fonction executée chaque iteration pour verifier si le joueur est sur la plateforme pour assumer s'il peut faire saut ou non
+ */
 void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
 {
 	int jumpState = (moveDir.y < 0.0f);
@@ -275,7 +284,9 @@ void playerUpdateVelocity2(cpBody *body, cpVect gravity, cpFloat damping, cpFloa
 
 
 
-
+/**
+ * Fonction qui sert à initializer l'espace virtuel de la librairie de collision
+ */
 void initSpace()
 {
 	cpSpace *space = cpSpaceNew();
@@ -365,7 +376,11 @@ void initSpace()
 }
 
 
-
+/**
+ * fonction qui sert à créer un nouveau sprite et l'ajouter au tableau des sprites pour l'afficher sur l'ecran
+ * @param name le nom de l'image du sprite
+ * @param type le type du sprite (1=normal, 2=bouton)
+ */
 Sprite* MakeSprite(char name[], int type)
 {
   char fname[40] = "";
@@ -413,6 +428,9 @@ Sprite* MakeSprite(char name[], int type)
   return sprite;
 }
 
+/**
+ * fonction qui verifie si la position de la souris est sur un bouton
+ */
 void checkMouse()
 {
   cMouseOver = -1;
@@ -429,6 +447,13 @@ void checkMouse()
   }
 }
 
+/**
+ * fonction qui sert à créer un nouveau bouton et l'ajouter au tableau des sprites pour l'afficher sur l'ecran
+ * @param name le nom de l'image du bouton
+ * @param x position sur l'axe horizontal du bouton
+ * @param y position sur l'axe vertical du bouton
+ * @param m l'identifiant du sous menu associé au bouton
+ */
 Sprite* addButton(char name[], int x, int y, int m)
 {
   Sprite* btn = MakeSprite(name, 1);
@@ -441,6 +466,13 @@ Sprite* addButton(char name[], int x, int y, int m)
   return btn;
 }
 
+/**
+ * fonction qui sert à créer un nouveau sprite et l'ajouter au tableau des sprites pour l'afficher sur l'ecran
+ * @param name le nom de l'image du sprite
+ * @param x position sur l'axe horizontal du sprite
+ * @param y position sur l'axe vertical du sprite
+ * @param m l'identifiant du sous menu associé au sprite
+ */
 Sprite* addSprite(char name[], int x, int y, int m)
 {
   Sprite* btn = MakeSprite(name, 0);
@@ -451,6 +483,15 @@ Sprite* addSprite(char name[], int x, int y, int m)
 
   return btn;
 }
+
+/**
+ * ajoute un objet immobile à l'espace virtual de collision (principalement pour la collision avec la plateforme)
+ * @param space reference de l'espace virtuel de la librairie de collision
+ * @param px position sur l'axe horizontal de l'objet
+ * @param py position sur l'axe vertical de l'objet
+ * @param sx largeur de l'objet
+ * @param sy hauteur de l'objet
+ */
 void addBox(cpSpace *space, int px, int py, int sx, int sy)
 {
 	px-=10;
@@ -477,6 +518,11 @@ void addBox(cpSpace *space, int px, int py, int sx, int sy)
   //addSprite("images/vol", 0, 0, 0)->body = staticBody;
 }
 
+/**
+ * joue un morceau de musique
+ * @param name le nom du ficher son
+ * @param rep le nombre de repetitions du son
+ */
 void PlaySound(char name[], int rep)
 {
   Mix_Music *music;
@@ -484,6 +530,12 @@ void PlaySound(char name[], int rep)
   Mix_PlayMusic(music, rep);
 }
 
+
+/**
+ * joue un son bref
+ * @param name le nom du ficher son
+ * @param rep le nombre de repetitions du son
+ */
 void PlaySoundSingle(char name[], int rep)
 {
   Mix_Chunk *music;
@@ -492,6 +544,10 @@ void PlaySoundSingle(char name[], int rep)
   Mix_PlayChannel(-1, music, rep);
 }
 
+/**
+ * Verifie s'il y a un gagnant dans l'enigme TicTacToe
+ * @param nempty le nombre des cases vides restantes dans l'enigme TicTacToe
+ */
 void checkEnigmeWin(int nempty)
 {
 	int winner = 0;
@@ -541,6 +597,13 @@ void checkEnigmeWin(int nempty)
 	}
 }
 
+
+
+/**
+ * Executée lors d'un clic sur un bouton dons l'identifiant de clic est non nul
+ * @param sprite la reference du bouton appuyé dessus
+ * @param e l'identifiant du clic déclaré dans la sprite
+ */
 void processClickEvent(Sprite* sprite, int e)
 {
   printf("clicked : %d \n", e);
@@ -664,6 +727,12 @@ void processClickEvent(Sprite* sprite, int e)
   }
 }
 
+
+/**
+ * Executée chaque iteration du jeu sur les sprites dont l'identifiant updateEvent est non nul
+ * @param sprite la reference de la sprite
+ * @param e l'identifiant du sprite
+ */
 void processUpdate(Sprite* sprite, int event)
 {
   switch(event)
@@ -682,6 +751,10 @@ void processUpdate(Sprite* sprite, int event)
   }
 }
 
+/**
+ * Change la scene (0 = menu principal, 1 = jeu)
+ * @param id l'identifiant de la scene
+ */
 void setScene(int id)
 {
   nSprites = 0;
@@ -789,6 +862,10 @@ void setScene(int id)
   }
 }
 
+
+/**
+ * met l'image sur l'ecran soit relativement à l'ecran (isSTatic = 1), soit relativement au monde du jeu (isStatic = 0)
+ */
 void blitSurface(SDL_Surface *img, SDL_Rect *pos1, SDL_Surface *target, SDL_Rect *pos2, int isStatic)
 {
 
@@ -803,6 +880,10 @@ void blitSurface(SDL_Surface *img, SDL_Rect *pos1, SDL_Surface *target, SDL_Rect
 
 }
 
+
+/**
+ * Fonction qui initialize l'enigme TicTacToe contre l'IA2
+ */
 void showEnigme()
 {
 	Sprite* bgSprite = addSprite("images/tictactoebg", 400-206, 240-206, 3);
@@ -818,6 +899,10 @@ void showEnigme()
 }
 
 
+
+/**
+ * Fonction principale du programme du jeu qui contient le boucle du jeu
+ */
 int main()
 {
 
